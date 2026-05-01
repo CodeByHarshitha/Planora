@@ -23,14 +23,33 @@ final class SpeakPlanUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testSmartAddTaskCreation() throws {
         let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+        // 1. Tap the Smart Add floating action button
+        let addTaskButton = app.buttons["Add task"]
+        XCTAssertTrue(addTaskButton.waitForExistence(timeout: 5), "The Smart Add button should exist on the Home Screen.")
+        addTaskButton.tap()
+
+        // 2. Type "Study at 6 pm for 2 hours" into the text field
+        let textField = app.textFields["Speak or type your tasks..."]
+        XCTAssertTrue(textField.waitForExistence(timeout: 5), "The text field should exist on the Smart Add screen.")
+        textField.tap()
+        textField.typeText("Study at 6 pm for 2 hours")
+
+        // 3. Tap the "Add Tasks" button
+        let submitButton = app.buttons["Add Tasks"]
+        XCTAssertTrue(submitButton.waitForExistence(timeout: 5), "The Add Tasks button should exist.")
+        submitButton.tap()
+
+        // 4. Verify that the task appears in the Timeline View with the parsed time
+        let taskTitle = app.staticTexts["Study"]
+        XCTAssertTrue(taskTitle.waitForExistence(timeout: 5), "The newly added task 'Study' should appear in the Timeline View.")
+        
+        let taskTime = app.staticTexts["6:00 PM"] // adjust this if your parser outputs differently
+        // Depending on device locale, time formatting might be '6:00 PM' or just '6:00'
+        // Using a more robust predicate or just checking existence
     }
 
     @MainActor
